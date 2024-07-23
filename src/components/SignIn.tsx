@@ -10,15 +10,30 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { SignInResponse } from '../types/signinResponse';
+import { SIGN_IN } from '../mutations/authMutations';
 
 const theme = createTheme();
 
 export default function SignIn() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [failSignIn, setFailSignIn] = useState(false);
+	const [signIn] = useMutation<SignInResponse>(SIGN_IN);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+		const signInInput = { email, password };
+		try {
+			const result = await signIn({
+				variables: { signInInput },
+			});
+			console.log(result);
+		} catch (err: any) {
+			console.log(err.message);
+		}
+
     console.log({
       email,
       password,
